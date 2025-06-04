@@ -14,4 +14,4 @@ router = APIRouter(
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
     prediction = predict_image(contents)
-    return JSONResponse(content={'prediction': f'{round(prediction * 100, 2)}%'})
+    return JSONResponse(content={'prediction': f'{prediction * 100}%'})

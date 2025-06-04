@@ -173,7 +173,12 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# ---
-model.keras
-dataset
+# Database
 app/db/database
+app/db/images
+
+# keras Model
+model.keras
+
+# Nootebook Dataset
+dataset
