@@ -2,10 +2,20 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import tensorflow as tf
-def get_keras_model():
-    return tf.keras.models.load_model('app/models/model.keras')
+from PIL import Image
+import io
+import numpy as np
 
-def predict_image(image_array):
-    model = get_keras_model()
+model = tf.keras.models.load_model('app/models/model.keras')
+
+def process_image(image):
+    image = Image.open(io.BytesIO(image)).convert("RGB")
+    image = image.resize((224,224))
+    image_array = np.array(image) / 255.5
+    image_array = np.expand_dims(image_array, axis=0)
+    return image_array
+
+def predict_image(contents):
+    image_array = process_image(contents)
     prediction = model.predict(image_array)[0][0]
     return prediction

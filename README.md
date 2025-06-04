@@ -99,3 +99,6 @@ Endpoint para fazer previsões de imagens de pele. Recebe um arquivo de imagem e
 ```
 
 Status Code de Sucesso: 200 OK
+
+
+

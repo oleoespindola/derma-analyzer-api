@@ -1,3 +1,5 @@
+from fastapi.responses import JSONResponse
+import uvicorn
 from fastapi import FastAPI
 
 from app.api.routes import router
@@ -10,3 +12,12 @@ app = FastAPI(
 )
 
 app.include_router(router)
+
+@router.post("/predict")
+async def predict():
+    return JSONResponse(content={
+        "message": "Visit https://github.com/oleoespindola/derma-analyzer-api for documentation"
+    })
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=7860, reload=False)
