@@ -14,6 +14,8 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    access_token: str
+    token_type: str = "bearer"
 
     class Config:
         orm_mode = True # converts ORM (SQLAlchemy) directly to JSON

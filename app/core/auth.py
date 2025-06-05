@@ -7,15 +7,15 @@ from app.core.config import settings
 
 bearer_scheme = HTTPBearer()
 
-def create_token():
+def create_token(user_id: str):
     expiration = datetime.now(timezone.utc) + timedelta(hours=1)
-    payload = {'exp': expiration, 'sub': 'access_granted'}
-    token = jwt.encode(payload, key=settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    payload = {'exp': expiration, 'sub': user_id}
+    token = jwt.encode(payload, key=settings.API_KEY, algorithm=settings.ALGORITHM)
     return token
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
     try:
-        payload = jwt.decode(credentials.credentials, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(credentials.credentials, settings.API_KEY, algorithms=[settings.ALGORITHM])
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")

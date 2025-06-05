@@ -1,17 +1,16 @@
 from datetime import datetime
 import os
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Header, UploadFile
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal
-from app import schemas
 from app.crud import user as user_crud
 from app.models.keras_model import predict_image
-from app.schemas.user import UserResponse, AuthRequest
+from app.schemas import user as user_schemas
 from app.core.auth import verify_token
-from app.core.security import verify_password
+from app.core.config import settings
 
 router = APIRouter(
     prefix="/users",
@@ -19,6 +18,10 @@ router = APIRouter(
 )
 
 os.makedirs("app/db/images", exist_ok=True)
+
+def verify_api_key(api_key: str):
+    if api_key != settings.API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API key")
 
 def get_db():
     db = SessionLocal()
@@ -28,50 +31,40 @@ def get_db():
         db.close()
 
 
-@router.post("/new", response_model=UserResponse)
+@router.post("/new")
 def create_user(
-        user: schemas.user.UserCreate, # User data (validated by Pydantic)
-        db: Session = Depends(get_db), # Database session (injected)
-        payload: dict = Depends(verify_token) # Checks if the email is already registered
+        user: user_schemas.UserCreate, # User data (validated by Pydantic)
+        api_key: str = Header(...),
+        db: Session = Depends(get_db), # Database session (injected)registered
     ):
-    db_user = user_crud.get_user_by_email(db, email=user.email)     
-    if db_user: # Checks if the email is already registered
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return user_crud.new_user(db=db, user=user) # Creates the user if the email is unique
+    verify_api_key(api_key)     
+    db_user, token = user_crud.new_user(db=db, user=user)
+    return user_schemas.UserResponse(
+        id=db_user.id,
+        name=db_user.name,
+        email=db_user.email,
+        access_token=token
+    )
 
 
-@router.post("/auth", response_model=UserResponse)
+@router.post("/auth", response_model=user_schemas.UserResponse)
 def login(
-        auth: AuthRequest, # User data (validated by Pydantic)
+        auth_request: user_schemas.AuthRequest, # User data (validated by Pydantic)
+        api_key: str = Header(...),
         db: Session = Depends(get_db), # Database session (injected)
-        payload: dict = Depends(verify_token) # Checks if the email is already registered
     ):
-    """
-    Authenticates a user by verifying the provided email and password.
+    verify_api_key(api_key=api_key)
+    db_user, token = user_crud.user_auth(db=db, user=auth_request)
+    return user_schemas.UserResponse(
+        id=db_user.id,
+        name=db_user.name,
+        email=db_user.email,
+        access_token=token
+    )
 
-    Args:
-        email (str): The email of the user attempting to log in.
-        password (str): The password of the user attempting to log in.
-        db (Session): The database session used for querying user information.
-        payload (dict): The token payload obtained from verifying the authorization token.
-
-    Raises:
-        HTTPException: If the email is not registered or if the password is invalid.
-
-    Returns:
-        UserResponse: The authenticated user's information.
-    """
-
-    db_user = user_crud.get_user_by_email(db, email=auth.email)     
-    if not db_user: # Checks if the email is already registered
-        raise HTTPException(status_code=400, detail="Email not registered")
-    if not verify_password(plain_password=auth.password, hashed_password=db_user.password):
-        raise HTTPException(status_code=400, detail="Invalid password")
-    return db_user
-
-@router.post("/predict", response_model=UserResponse)
+@router.post("/predict", response_model=user_schemas.UserResponse)
 async def user_predict(
-        user_auth: UserResponse,
+        user_auth: user_schemas.UserResponse,
         db: Session = Depends(get_db),
         file: UploadFile = File(...),
         payload: dict = Depends(verify_token)
