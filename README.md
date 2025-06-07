@@ -30,7 +30,7 @@
 
 ## Endpoints
 
-- [GET /predict](#get-predict)
+- [POST /predict](#post-predict)
 - [POST /users/new](#post-usersnew)
 - [POST /users/auth](#post-usersauth)
 - [GET /users/current](#get-userscurrent)
