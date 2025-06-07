@@ -19,3 +19,8 @@ class UserResponse(UserBase):
 
     class Config:
         orm_mode = True # converts ORM (SQLAlchemy) directly to JSON
+
+
+class FeedbackRequest(BaseModel):
+    analysis_id: int
+    feedback: int

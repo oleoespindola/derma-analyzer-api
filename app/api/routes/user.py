@@ -34,12 +34,14 @@ def create_user(
         db: Session = Depends(get_db), # Database session (injected)registered
     ):
     verify_api_key(api_key)     
-    db_user, token = user_utils.new_user(db=db, user=user)
+
+    response = user_utils.new_user(db=db, user=user)
+
     return user_schemas.UserResponse(
-        sub=db_user.id,
-        name=db_user.name,
-        email=db_user.email,
-        access_token=token
+        sub=response['user'].id,
+        name=response['user'].name,
+        email=response['user'].email,
+        access_token=response['token']
     )
 
 @router.post("/auth", response_model=user_schemas.UserResponse)
@@ -49,12 +51,14 @@ def login(
         db: Session = Depends(get_db), # Database session (injected)
     ):
     verify_api_key(api_key=api_key)
-    db_user, token = user_utils.user_auth(db=db, user=auth_request)
+
+    response = user_utils.user_auth(db=db, user=auth_request)
+
     return user_schemas.UserResponse(
-        sub=db_user.id,
-        name=db_user.name,
-        email=db_user.email,
-        access_token=token
+        sub=response['user'].id,
+        name=response['user'].name,
+        email=response['user'].email,
+        access_token=response['token']
     )
 
 @router.get("/current", response_model=user_schemas.UserResponse)
@@ -75,12 +79,29 @@ async def user_predict(
     verify_api_key(api_key)   
     
     contents = await file.read()
-    predict = user_utils.prediction(
+    response = user_utils.prediction(
         db=db,
         user_id=payload['sub'],
         contents=contents
     )
     
     return JSONResponse(content={
-        "predict": str(predict)
+        "predict": str(response['predict']),
+        "image_id": str(response['image_id']),
+        "analysis_id": str(response['analysis_id'])
     })
+    
+@router.post("/feedback")
+def set_prediction_feedback(
+        feedbackRequest: user_schemas.FeedbackRequest,
+        api_key: str = Header(...),
+        db: Session = Depends(get_db),
+        payload: dict = Depends(verify_token)
+    ):
+    verify_api_key(api_key)   
+    
+    if not bool(feedbackRequest.feedback):
+        return JSONResponse(content={"message": "Invalid feedback"}, status_code=400)
+    user_utils.prediction_feedback(db=db, analysis_id=feedbackRequest.analysis_id, feedback=feedbackRequest.feedback)
+    
+    return JSONResponse(content={"message": "Feedback saved"})
