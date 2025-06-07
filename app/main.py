@@ -13,7 +13,7 @@ app = FastAPI(
 
 app.include_router(router)
 
-@router.post("/")
+@router.get("/")
 async def predict():
     return JSONResponse(content={
         "message": "Visit https://github.com/oleoespindola/derma-analyzer-api for documentation"
