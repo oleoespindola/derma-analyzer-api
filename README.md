@@ -38,7 +38,7 @@
 - [POST /users/feedback](#post-usersfeedback)
 
 ---
-### POST /
+### GET /
 
 Endpoint para verificar se a API está online.
 
