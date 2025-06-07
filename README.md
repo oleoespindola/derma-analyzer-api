@@ -35,9 +35,9 @@
 - [POST /users/auth](#post-usersauth)
 - [GET /users/current](#get-userscurrent)
 - [POST /users/predict](#post-userspredict)
+- [POST /users/feedback](#post-usersfeedback)
 
 ---
-
 ### POST /
 
 Endpoint para verificar se a API está online.
@@ -209,3 +209,40 @@ file: [sua-imagem-aqui]
 ```
 
 Status Code de Sucesso: 200 OK
+
+---
+
+### POST /users/feedback
+
+> Requer api-key e Bearer token
+
+Endpoint para enviar feedback sobre a análise de imagem. Recebe um JSON no corpo da requisição com os campos `analysis_id` e `feedback`.
+
+> 💡 TRUE para análises positivas e FALSE para negativas
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+Authorization: Bearer seu-token-aqui
+```
+
+#### Exemplo de Corpo da Requisição
+
+```json
+{
+  "analysis_id": 1,
+  "feedback": true
+}
+```
+
+#### Exemplo de Resposta
+
+```json
+{
+  "message": "Feedback saved"
+}
+```
+
+Status Code de Sucesso: 200 OK
+
