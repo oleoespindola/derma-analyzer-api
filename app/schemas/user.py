@@ -13,7 +13,7 @@ class UserCreate(UserBase):
 
 
 class UserResponse(UserBase):
-    id: int
+    sub: int
     access_token: str
     token_type: str = "bearer"
 

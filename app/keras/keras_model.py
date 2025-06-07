@@ -2,11 +2,13 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import tensorflow as tf
-from PIL import Image
 import io
 import numpy as np
+from decimal import Decimal, ROUND_HALF_UP
 
-model = tf.keras.models.load_model('app/models/model.keras')
+from PIL import Image
+
+model = tf.keras.models.load_model('app/keras/model.keras')
 
 def process_image(image):
     image = Image.open(io.BytesIO(image)).convert("RGB")
@@ -18,4 +20,5 @@ def process_image(image):
 def predict_image(contents):
     image_array = process_image(contents)
     prediction = model.predict(image_array)[0][0]
+    prediction = Decimal(str(prediction)).quantize(Decimal('1.0000000000'), rounding=ROUND_HALF_UP)
     return prediction

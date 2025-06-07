@@ -1,13 +1,23 @@
 from datetime import datetime
+from typing import Any
 from fastapi import HTTPException
+
 from sqlalchemy.orm import Session
+
+import cloudinary
+import cloudinary.uploader
 
 from app.models.user import User, Image_Analysis
 from app.schemas.user import UserCreate, AuthRequest
 from app.core import security, auth
-
+from app.core.config import settings
+from app.keras.keras_model import predict_image
+    
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
+
+def get_user_by_id(db: Session, id: str):
+    return db.query(User).filter(User.email == id).first()
 
 def new_user(db: Session, user: UserCreate):
     db_user = get_user_by_email(db=db, email=user.email)
@@ -25,6 +35,7 @@ def new_user(db: Session, user: UserCreate):
     return db_user, token
 
 def user_auth(db: Session, user: AuthRequest):
+    
     db_user = get_user_by_email(db=db, email=user.email)
     if not db_user:
         raise HTTPException(status_code=401, detail="Email not found")
@@ -33,23 +44,36 @@ def user_auth(db: Session, user: AuthRequest):
     return db_user, token
 
 
-def save_prediction(db: Session, id: int, analysis_result, image_url: str):
-    image_Analysis = Image_Analysis(
-        id=id,
-        analysis_result=analysis_result,
-        image_url=image_url
-    )
-    db.add(image_Analysis)
-    db.commit()
-    db.refresh(image_Analysis)
-    return image_Analysis
+def prediction(
+        db: Session, 
+        user_id: int, 
+        contents: Any,  
+    ):
+    predict = predict_image(contents=contents)    
+    
+    public_id = f"{user_id} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    try:
+        cloudinary.config(
+            cloud_name=settings.CLOUDINARY_NAME,
+            api_key=settings.CLOUDINARY_API,
+            api_secret=settings.CLOUDINARY_API_KEY
+        )    
+        response = cloudinary.uploader.upload(contents, public_id=public_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Image upload erros: {str(e)}')
 
-def prediction_feedback(db: Session, image_Analysis: Image_Analysis, user_feedback: str, feedback_timestamp: str):
-    image_Analysis(
-        user_feedback=user_feedback,
-        feedback_timestamp=datetime.now()
-    )
-    db.merge(image_Analysis)
-    db.commit()
-    db.refresh(image_Analysis)
-    return image_Analysis
+    try:
+        image_Analysis = Image_Analysis(
+            user_id=user_id,
+            image_predict=predict,
+            image_url=f'{public_id}; {response["secure_url"]}'
+        )
+        db.add(image_Analysis)
+        db.commit()
+        db.refresh(image_Analysis)
+    except:
+        cloudinary.uploader.destroy(public_id)
+        raise HTTPException(status_code=500, detail="Error saving image data analysis (DB)")
+    
+    return predict
