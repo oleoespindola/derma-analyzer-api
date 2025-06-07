@@ -1,7 +1,5 @@
 # derma-analyzer-api
 
-## Descrição
-
 🧑🏾‍⚕️ A Derma Analyzer API é uma aplicação web que utiliza técnicas de aprendizado de máquina para analisar imagens de pele e detectar possíveis casos de melanoma.
 
 ## Sumário
@@ -16,7 +14,7 @@
 - [Rotas da API](app/api/routes/README.md)
 - [Banco de Dados](app/db/README.md)
 - [Autenticação e Segurança](app/core/README.md)
-- [CRUD](app/crud/README.md)
+- [UTILS](app/utils/README.md)
 
 ### Treinamento do modelo
 
@@ -32,35 +30,65 @@
 
 ## Endpoints
 
-- [POST /token](#post-token)
-- [POST /users](#post-users)
-- [GET /users/{email}](#get-usersemail)
 - [POST /predict](#post-predict)
+- [POST /users/new](#post-usersnew)
+- [POST /users/auth](#post-usersauth)
+- [GET /users/current](#get-userscurrent)
+- [POST /users/predict](#post-userspredict)
 
-### POST /token
+---
 
-Endpoint para gerar um token de acesso. Recebe um JSON no corpo da requisição com o campo `secret`. Exemplo de JSON:
+### POST /
 
-```json
-{
-  "secret": "your_secret_key"
-}
+Endpoint para verificar se a API está online.
+
+Status Code de Sucesso: 200 OK
+
+---
+
+### POST /predict
+
+> Rota pública
+
+Endpoint para fazer predições com o modelo de Keras. Recebe um arquivo de imagem como entrada e retorna um JSON com a probabilidade de que a imagem seja um caso maligno de câncer de pele.
+
+#### Exemplo de Requisição
+
+```http
+Content-Type: multipart/form-data
 ```
 
-Exemplo de Resposta:
+#### Exemplo de Corpo da Requisição
+
+```plaintext
+file: [sua-imagem-aqui]
+```
+
+#### Exemplo de Resposta
 
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "bearer"
+  "prediction": "85.00%"
 }
 ```
 
 Status Code de Sucesso: 200 OK
 
-### POST /users
+---
 
-Endpoint para criar usuários. Recebe um JSON no corpo da requisição com os campos `name`, `email` e `password`. Exemplo de JSON:
+### POST /users/new
+
+> Requer api-key
+
+Endpoint para criar usuários. Recebe um JSON no corpo da requisição com os campos `name`, `email` e `password`.
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+```
+
+#### Exemplo de Corpo da Requisição
 
 ```json
 {
@@ -70,35 +98,114 @@ Endpoint para criar usuários. Recebe um JSON no corpo da requisição com os ca
 }
 ```
 
-Status Code de Sucesso: 201 Created
-> Requer autenticação com Bearer Token.
-
-### GET /users/{email}
-
-Endpoint para obter informações de um usuário específico. O email do usuário deve ser passado no corpo da requisição. Retorna um JSON com os campos `id`, `name` e `email`. Exemplo de Resposta:
+#### Exemplo de Resposta
 
 ```json
 {
-  "id": 1,
   "name": "John Doe",
-  "email": "johndoe@example.com"
+  "email": "johndoe@example.com",
+  "sub": 1,
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
 }
 ```
 
 Status Code de Sucesso: 200 OK
-> Requer autenticação com Bearer Token.
 
-### POST /predict
+---
 
-Endpoint para fazer previsões de imagens de pele. Recebe um arquivo de imagem em formato JPEG ou PNG no corpo da requisição. A imagem deve ser quadrada (1x1) para melhores resultados. Retorna um JSON com a probabilidade de que a imagem seja um caso de melanoma. Não requer autenticação. Exemplo de Resposta:
+### POST /users/auth
+
+> Requer api-key
+
+Endpoint para autenticar usuários. Recebe um JSON no corpo da requisição com os campos `email` e `password`.
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+```
+
+#### Exemplo de Corpo da Requisição
 
 ```json
 {
-  "prediction": "85.67%"
+  "email": "johndoe@example.com",
+  "password": "securepassword123"
+}
+```
+
+#### Exemplo de Resposta
+
+```json
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "sub": 1,
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
 }
 ```
 
 Status Code de Sucesso: 200 OK
 
+---
 
+### GET /users/current
 
+> Requer api-key e Bearer token
+
+Endpoint para obter as informações do usuário autenticado.
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+Authorization: Bearer seu-token-aqui
+```
+
+#### Exemplo de Resposta
+
+```json
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "sub": 1,
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+Status Code de Sucesso: 200 OK
+
+---
+
+### POST /users/predict
+
+> Requer api-key e Bearer token
+
+Endpoint para enviar uma imagem para análise. Recebe um arquivo de imagem no corpo da requisição, enviado com o tipo de conteúdo `multipart/form-data` e o nome do campo `file`.
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+Authorization: Bearer seu-token-aqui
+Content-Type: multipart/form-data
+```
+
+#### Exemplo de Corpo da Requisição
+
+```plaintext
+file: [sua-imagem-aqui]
+```
+
+#### Exemplo de Resposta
+
+```json
+{
+  "predict": "0.85"
+}
+```
+
+Status Code de Sucesso: 200 OK

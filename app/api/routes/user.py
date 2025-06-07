@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal
-from app.crud import user as user_crud
+from app.utils import user as user_utils
 from app.schemas import user as user_schemas
 from app.core.auth import verify_token
 from app.core.config import settings
@@ -34,7 +34,7 @@ def create_user(
         db: Session = Depends(get_db), # Database session (injected)registered
     ):
     verify_api_key(api_key)     
-    db_user, token = user_crud.new_user(db=db, user=user)
+    db_user, token = user_utils.new_user(db=db, user=user)
     return user_schemas.UserResponse(
         sub=db_user.id,
         name=db_user.name,
@@ -49,7 +49,7 @@ def login(
         db: Session = Depends(get_db), # Database session (injected)
     ):
     verify_api_key(api_key=api_key)
-    db_user, token = user_crud.user_auth(db=db, user=auth_request)
+    db_user, token = user_utils.user_auth(db=db, user=auth_request)
     return user_schemas.UserResponse(
         sub=db_user.id,
         name=db_user.name,
@@ -75,7 +75,7 @@ async def user_predict(
     verify_api_key(api_key)   
     
     contents = await file.read()
-    predict = user_crud.prediction(
+    predict = user_utils.prediction(
         db=db,
         user_id=payload['sub'],
         contents=contents

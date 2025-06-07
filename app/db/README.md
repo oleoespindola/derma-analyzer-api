@@ -18,4 +18,4 @@ Contém a classe `Base` que é a base para todos os modelos do banco de dados. E
 
 ## Nota sobre o Banco de Dados
 
-O banco de dados não está incluído no repositório, apesar de ser um banco SQLite. Isso ocorre porque o banco de dados pode conter dados sensíveis ou configurações específicas do ambiente de desenvolvimento. No entanto, os scripts utilizados para criar e popular o banco de dados serão fornecidos em breve para que você possa recriar o ambiente localmente.
+O banco de dados é um banco Postgres hospedado no Supabase, que fornece uma camada de abstração para o banco de dados. Além disso, estou usando o Cloudinary para armazenar as imagens enviadas, o que permite que eu possa escalar a aplicação sem me preocupar com o armazenamento de arquivos.

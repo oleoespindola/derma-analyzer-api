@@ -9,10 +9,12 @@
 
 ## user.py
 
-O arquivo `user.py` contém as classes que representam os usuários na API. Elas são utilizadas como entrada e saída de dados para as rotas de usuários.
+O arquivo `user.py` contém as classes e esquemas que representam os usuários na API. Elas são utilizadas como entrada e saída de dados para as rotas de usuários.
 
-- `UserCreate`: Representa os dados de um usuário que serão enviados para a rota de criação de usuários.
-- `UserResponse`: Representa os dados de um usuário que serão retornados para o cliente.
+- `UserBase`: Representa os campos básicos de um usuário, como `name` e `email`.
+- `UserCreate`: Estende `UserBase` e adiciona o campo `password` para criação de usuários.
+- `UserResponse`: Contém os dados de um usuário retornados para o cliente, incluindo o `access_token`.
+- `AuthRequest`: Utilizado para autenticação, contendo `email` e `password`.
 
 ## token.py
 
