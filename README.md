@@ -38,7 +38,7 @@
 - [POST /users/feedback](#post-usersfeedback)
 
 ---
-### POST /
+### GET /
 
 Endpoint para verificar se a API está online.
 
@@ -51,6 +51,8 @@ Status Code de Sucesso: 200 OK
 > Rota pública
 
 Endpoint para fazer predições com o modelo de Keras. Recebe um arquivo de imagem como entrada e retorna um JSON com a probabilidade de que a imagem seja um caso maligno de câncer de pele.
+
+💡 **Para um resultado mais preciso, envie apenas imagens na proporção 1x1.**
 
 #### Exemplo de Requisição
 
@@ -185,6 +187,8 @@ Status Code de Sucesso: 200 OK
 > Requer api-key e Bearer token
 
 Endpoint para enviar uma imagem para análise. Recebe um arquivo de imagem no corpo da requisição, enviado com o tipo de conteúdo `multipart/form-data` e o nome do campo `file`.
+
+💡 **Para um resultado mais preciso, envie apenas imagens na proporção 1x1.**
 
 #### Exemplo de Requisição
 
