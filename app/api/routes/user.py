@@ -109,3 +109,12 @@ def set_prediction_feedback(
     user_utils.prediction_feedback(db=db, analysis_id=feedbackRequest.analysis_id, feedback=feedbackRequest.feedback)
     
     return JSONResponse(content={"message": "Feedback saved"})
+
+@router.post("/history")
+def get_prediction_history(
+        api_key: str = Header(...),
+        db: Session = Depends(get_db),
+        payload: dict = Depends(verify_token)
+    ):
+    verify_api_key(api_key)   
+    return user_utils.get_predictions_history(db=db, user_id=payload['sub'])

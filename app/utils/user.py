@@ -98,3 +98,6 @@ def prediction_feedback(db: Session, analysis_id: int, feedback: bool) -> None:
     )
     db.merge(image_Analysis)
     db.commit()
+    
+def get_predictions_history(db: Session, user_id: int) -> list[Image_Analysis]:
+    return db.query(Image_Analysis).filter(Image_Analysis.user_id == user_id).all()
