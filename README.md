@@ -38,6 +38,7 @@
 - [POST /users/feedback](#post-usersfeedback)
 
 ---
+
 ### GET /
 
 Endpoint para verificar se a API está online.
@@ -250,3 +251,40 @@ Authorization: Bearer seu-token-aqui
 
 Status Code de Sucesso: 200 OK
 
+---
+
+### GET /users/history
+
+> Requer api-key e Bearer token
+
+Endpoint para obter o histórico de análises de imagens do usuário autenticado.
+
+#### Exemplo de Requisição
+
+```http
+api-key: sua-api-key-aqui
+Authorization: Bearer seu-token-aqui
+```
+
+#### Exemplo de Resposta
+
+```json
+[
+  {
+    "analysis_id": 1,
+    "image_url": "https://example.com/your-image-url",
+    "prediction": "0.85",
+    "created_at": "2023-10-01T12:00:00Z"
+  },
+  {
+    "analysis_id": 2,
+    "image_url": "https://example.com/another-image-url",
+    "prediction": "0.67",
+    "created_at": "2023-10-02T14:00:00Z"
+  }
+]
+```
+
+Status Code de Sucesso: 200 OK
+
+---

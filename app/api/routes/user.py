@@ -110,7 +110,7 @@ def set_prediction_feedback(
     
     return JSONResponse(content={"message": "Feedback saved"})
 
-@router.post("/history")
+@router.get("/history")
 def get_prediction_history(
         api_key: str = Header(...),
         db: Session = Depends(get_db),
