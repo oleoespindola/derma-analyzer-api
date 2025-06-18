@@ -78,7 +78,11 @@ async def user_predict(
     ):
     verify_api_key(api_key)   
     
-    contents = await file.read()
+    try:
+        contents = await file.read()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Image upload erros: {str(e)}')
+    
     response = user_utils.prediction(
         db=db,
         user_id=payload['sub'],
