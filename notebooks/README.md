@@ -30,7 +30,7 @@ Modelo:
 
 ## Resultados
 
-Treino utilizando o dataset [Melanoma Cancer Image Dataset](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset?select=train)
+Treino utilizando o dataset [Melanoma Cancer Image Dataset](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset) + [Skin Cancer Malignant vs. Benign](https://www.kaggle.com/datasets/fanconic/skin-cancer-malignant-vs-benign)
 
 ### Acurácia
 
