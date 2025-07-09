@@ -179,6 +179,9 @@ app/db/images
 
 # keras Model
 model.keras
+best_model.keras
+best_model_fine.keras
+cancer_detection_model.keras
 
 # Nootebook Dataset
 dataset

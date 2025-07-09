@@ -1,10 +1,8 @@
 # 📚 Treinamento do Modelo
 
-**Adendo**: o arquivo `modelos/keras_model.py` deve ser movido para a pasta `app/models` para ser usado na API.
+⬆️ [Voltar para o Readme principal ](../README.md)
 
 ## ⚙️ Configurações do Treinamento
-
-Configurações do treinamento:
 
 | Parâmetro | Valor | Descrição |
 | --- | --- | --- |
@@ -20,6 +18,8 @@ Configurações do treinamento:
 | `optimizer` | Adam com Cosine Decay | Otimizador com agendamento de taxa de aprendizado |
 | `callbacks` | EarlyStopping, ModelCheckpoint | Estratégias para evitar overfitting e salvar o melhor modelo |
 
+> Mais informações no training.ipynb
+
 ## Modelo
 
 Arquitetura do modelo utilizada (Transfer Learning):
@@ -33,15 +33,8 @@ Arquitetura do modelo utilizada (Transfer Learning):
   * **Dropout**: 50% para reduzir overfitting
   * **Dense** final: 1 neurônio com ativação Sigmoid para saída binária
 
-## Resultados
+## Adendos
+
+Um dos modelos (ex: best_model.keras) deve ser escolhido, renomeado para `model.keras` e movido para a pasta `app/keras` para ser usado na API.
 
 Treino utilizando o dataset [Melanoma Cancer Image Dataset](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset)
-
-### Acurácia
-
-![Acuracia](https://github.com/oleoespindola/derma-analyzer-api/blob/feature/auth/notebooks/charts/Acur%C3%A1ria%20-%20Dataset%20Public%20Image.png?raw=true)
-
-### Loss
-
-![Loss](https://github.com/oleoespindola/derma-analyzer-api/blob/feature/auth/notebooks/charts/Loss%20-%20Dataset%20Public%20Image.png?raw=true)
-
