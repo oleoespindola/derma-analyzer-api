@@ -20,19 +20,6 @@
 
 > Mais informações no training.ipynb
 
-## Modelo
-
-Arquitetura do modelo utilizada (Transfer Learning):
-
-* **Camada de entrada**: Imagem RGB com dimensão 224x224x3
-* **Base**: MobileNetV2 pré-treinada no ImageNet, com pesos congelados inicialmente
-* **Camadas adicionais:**
-  * **Data Augmentation**: Flip horizontal, rotação, zoom e translação aleatória
-  * **GlobalAveragePooling2D**: Reduz as dimensões e evita overfitting
-  * **Dense**: 128 neurônios com ativação ReLU
-  * **Dropout**: 50% para reduzir overfitting
-  * **Dense** final: 1 neurônio com ativação Sigmoid para saída binária
-
 ## Adendos
 
 Um dos modelos (ex: best_model.keras) deve ser escolhido, renomeado para `model.keras` e movido para a pasta `app/keras` para ser usado na API.
